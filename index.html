@@ -153,6 +153,14 @@
         }
     });
 
+    const salonLabels = {
+        "Aula 101": "Big Data"
+    };
+
+    function formatSalonName(salon) {
+        return salonLabels[salon] || salon;
+    }
+
     function loadSalones() {
         const grid = document.getElementById('salones-grid');
         grid.innerHTML = '<p class="text-slate-400 col-span-1 md:col-span-2 lg:col-span-3">Cargando salones...</p>';
@@ -168,7 +176,7 @@
                 salones.forEach(salon => {
                     const button = document.createElement('button');
                     button.className = 'bg-slate-800/80 hover:bg-slate-700 text-white text-left p-6 rounded-3xl border border-white/10 shadow-lg transition';
-                    button.innerHTML = `<span class="block text-xl font-bold">${salon}</span><span class="text-slate-400 mt-2 block">Ver registros</span>`;
+                    button.innerHTML = `<span class="block text-xl font-bold">${formatSalonName(salon)}</span><span class="text-slate-400 mt-2 block">Ver registros</span>`;
                     button.onclick = () => showSalonDetail(salon);
                     grid.appendChild(button);
                 });
@@ -181,7 +189,7 @@
     function showSalonDetail(salon) {
         document.getElementById('salones-section').classList.add('hidden');
         document.getElementById('salon-detail').classList.remove('hidden');
-        document.getElementById('salon-title').innerText = salon;
+        document.getElementById('salon-title').innerText = formatSalonName(salon);
         document.getElementById('temp-val').innerText = '--°C';
         document.getElementById('hum-val').innerText = '--%';
         document.getElementById('salon-rows').innerHTML = '';
