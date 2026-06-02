@@ -135,7 +135,7 @@ def obtener_salon(aula):
 @app.route('/promedio', methods=['GET'])
 def obtener_promedio():
     try:
-        # Agregar documentos y calcular promedio
+        # Agregar documentos y calcular promedio global
         pipeline = [
             {
                 "$group": {
@@ -167,6 +167,41 @@ def obtener_promedio():
             "error": str(e)
         }), 400
 
+@app.route('/salon/<aula>/promedio', methods=['GET'])
+def obtener_promedio_salon(aula):
+    try:
+        pipeline = [
+            {"$match": {"aula": aula}},
+            {
+                "$group": {
+                    "_id": None,
+                    "temp_promedio": {"$avg": "$temperatura"},
+                    "hum_promedio": {"$avg": "$humedad"},
+                    "total_registros": {"$sum": 1}
+                }
+            }
+        ]
+        
+        resultado = list(coleccion.aggregate(pipeline))
+        
+        if resultado:
+            datos = resultado[0]
+            return jsonify({
+                "temperatura_promedio": round(datos["temp_promedio"], 2),
+                "humedad_promedio": round(datos["hum_promedio"], 2),
+                "total_registros": datos["total_registros"]
+            }), 200
+        
+        return jsonify({
+            "error": "No hay datos para calcular promedio en este salón"
+        }), 404
+        
+    except Exception as e:
+        print(f"Error al calcular promedio del salón {aula}: {e}")
+        return jsonify({
+            "error": str(e)
+        }), 400
+
 # ==========================
 # MÁXIMAS TEMPERATURA Y HUMEDAD
 # ==========================
@@ -174,7 +209,7 @@ def obtener_promedio():
 @app.route('/maximos', methods=['GET'])
 def obtener_maximos():
     try:
-        # Agregar documentos y encontrar máximos
+        # Agregar documentos y encontrar máximos globales
         pipeline = [
             {
                 "$group": {
@@ -200,6 +235,39 @@ def obtener_maximos():
         
     except Exception as e:
         print(f"Error al calcular máximos: {e}")
+        return jsonify({
+            "error": str(e)
+        }), 400
+
+@app.route('/salon/<aula>/maximos', methods=['GET'])
+def obtener_maximos_salon(aula):
+    try:
+        pipeline = [
+            {"$match": {"aula": aula}},
+            {
+                "$group": {
+                    "_id": None,
+                    "temp_maxima": {"$max": "$temperatura"},
+                    "hum_maxima": {"$max": "$humedad"}
+                }
+            }
+        ]
+        
+        resultado = list(coleccion.aggregate(pipeline))
+        
+        if resultado:
+            datos = resultado[0]
+            return jsonify({
+                "temperatura_maxima": round(datos["temp_maxima"], 2),
+                "humedad_maxima": round(datos["hum_maxima"], 2)
+            }), 200
+        
+        return jsonify({
+            "error": "No hay datos para calcular máximos en este salón"
+        }), 404
+        
+    except Exception as e:
+        print(f"Error al calcular máximos del salón {aula}: {e}")
         return jsonify({
             "error": str(e)
         }), 400

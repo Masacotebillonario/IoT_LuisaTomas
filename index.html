@@ -157,6 +157,8 @@
         "Aula 101": "Big Data"
     };
 
+    let selectedSalon = null;
+
     function formatSalonName(salon) {
         return salonLabels[salon] || salon;
     }
@@ -187,6 +189,7 @@
     }
 
     function showSalonDetail(salon) {
+        selectedSalon = salon;
         document.getElementById('salones-section').classList.add('hidden');
         document.getElementById('salon-detail').classList.remove('hidden');
         document.getElementById('salon-title').innerText = formatSalonName(salon);
@@ -198,6 +201,7 @@
     }
 
     function showSalones() {
+        selectedSalon = null;
         document.getElementById('salon-detail').classList.add('hidden');
         document.getElementById('salones-section').classList.remove('hidden');
     }
@@ -248,7 +252,11 @@
     }
 
     function loadCalculos() {
-        fetch('/promedio')
+        const basePath = selectedSalon ? `/salon/${encodeURIComponent(selectedSalon)}` : '';
+        const promedioUrl = selectedSalon ? `${basePath}/promedio` : '/promedio';
+        const maximosUrl = selectedSalon ? `${basePath}/maximos` : '/maximos';
+
+        fetch(promedioUrl)
             .then(response => response.json())
             .then(dataPromedio => {
                 if (dataPromedio.temperatura_promedio !== undefined) {
@@ -263,7 +271,7 @@
                 document.getElementById('hum-promedio').innerText = '--%';
             });
 
-        fetch('/maximos')
+        fetch(maximosUrl)
             .then(response => response.json())
             .then(dataMaximos => {
                 if (dataMaximos.temperatura_maxima !== undefined) {
