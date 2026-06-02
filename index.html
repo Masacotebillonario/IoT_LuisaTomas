@@ -130,7 +130,7 @@
         setInterval(async () => {
             try {
                 // Obtener último dato
-                const response = await fetch('http://127.0.0.1:5000/datos');
+                const response = await fetch('/datos');
                 const data = await response.json();
 
                 if (data.temperatura && data.humedad) {
@@ -144,7 +144,7 @@
 
             try {
                 // Obtener promedios
-                const responsePromedio = await fetch('http://127.0.0.1:5000/promedio');
+                const responsePromedio = await fetch('/promedio');
                 const dataPromedio = await responsePromedio.json();
 
                 if (dataPromedio.temperatura_promedio && dataPromedio.humedad_promedio) {
@@ -157,7 +157,7 @@
 
             try {
                 // Obtener máximos
-                const responseMaximos = await fetch('http://127.0.0.1:5000/maximos');
+                const responseMaximos = await fetch('/maximos');
                 const dataMaximos = await responseMaximos.json();
 
                 if (dataMaximos.temperatura_maxima && dataMaximos.humedad_maxima) {
