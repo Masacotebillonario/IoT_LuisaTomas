@@ -90,6 +90,45 @@ def enviar_datos():
     }), 404
 
 # ==========================
+# SALONES DISPONIBLES
+
+@app.route('/salones', methods=['GET'])
+def obtener_salones():
+    try:
+        salones = coleccion.distinct("aula")
+        salones = [s for s in salones if s is not None]
+        salones.sort()
+        return jsonify(salones), 200
+    except Exception as e:
+        print(f"Error al obtener salones: {e}")
+        return jsonify({
+            "error": str(e)
+        }), 400
+
+# ==========================
+# REGISTROS POR SALÓN
+
+@app.route('/salon/<aula>', methods=['GET'])
+def obtener_salon(aula):
+    try:
+        registros = list(coleccion.find(
+            {"aula": aula},
+            sort=[('fecha_registro', -1)]
+        ).limit(50))
+
+        for registro in registros:
+            registro['_id'] = str(registro['_id'])
+            if isinstance(registro.get('fecha_registro'), datetime):
+                registro['fecha_registro'] = registro['fecha_registro'].isoformat()
+
+        return jsonify(registros), 200
+    except Exception as e:
+        print(f"Error al obtener registros del salón {aula}: {e}")
+        return jsonify({
+            "error": str(e)
+        }), 400
+
+# ==========================
 # PROMEDIOS DE TEMPERATURA Y HUMEDAD
 # ==========================
 
