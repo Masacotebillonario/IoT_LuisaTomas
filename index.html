@@ -194,6 +194,7 @@
         selectedSalon = salon;
         document.getElementById('salones-section').classList.add('hidden');
         document.getElementById('salon-detail').classList.remove('hidden');
+        document.getElementById('calculos-section').classList.add('hidden');
         document.getElementById('salon-title').innerText = formatSalonName(salon);
         document.getElementById('temp-val').innerText = '--°C';
         document.getElementById('hum-val').innerText = '--%';
@@ -205,6 +206,7 @@
     function showSalones() {
         selectedSalon = null;
         document.getElementById('salon-detail').classList.add('hidden');
+        document.getElementById('calculos-section').classList.add('hidden');
         document.getElementById('salones-section').classList.remove('hidden');
     }
 
