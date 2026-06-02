@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IoT - Monitoreo de Aulas</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="bg-gradient-to-br from-slate-900 to-slate-800 min-h-screen font-sans text-white">
+
+    <div id="login-section" class="flex items-center justify-center min-h-screen">
+        <div class="bg-white/10 backdrop-blur-md p-8 rounded-2xl shadow-2xl w-96 border border-white/20">
+            <div class="text-center mb-8">
+                <i class="fas fa-microchip text-4xl text-cyan-400 mb-2"></i>
+                <h1 class="text-2xl font-bold">IoT Luisa Tomas</h1>
+                <p class="text-slate-400">Panel Administrativo LT</p>
+            </div>
+            <form id="login-form" class="space-y-4">
+                <input type="text" id="user" placeholder="Usuario" class="w-full p-3 rounded-lg bg-slate-700 border border-slate-600 focus:outline-none focus:border-cyan-400">
+                <input type="password" id="pass" placeholder="Contraseña" class="w-full p-3 rounded-lg bg-slate-700 border border-slate-600 focus:outline-none focus:border-cyan-400">
+                <button type="submit" class="w-full bg-cyan-500 hover:bg-cyan-600 py-3 rounded-lg font-bold transition">Ingresar</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="dashboard-section" class="hidden p-8">
+        <header class="flex justify-between items-center mb-10">
+            <h2 class="text-3xl font-bold text-cyan-400 italic">laboratorio big data <span class="text-sm font-light text-white block">Estado del tiempo real</span></h2>
+            <div class="flex gap-4">
+                <button onclick="toggleCalculos()" class="bg-green-500/20 hover:bg-green-500 text-green-400 hover:text-white px-4 py-2 rounded-lg border border-green-500 transition">
+                    <i class="fas fa-chart-bar mr-2"></i>Ver Cálculos
+                </button>
+                <button onclick="location.reload()" class="bg-red-500/20 hover:bg-red-500 text-red-400 hover:text-white px-4 py-2 rounded-lg border border-red-500 transition">Salir</button>
+            </div>
+        </header>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="bg-slate-800/50 p-6 rounded-3xl border border-white/10 flex items-center shadow-lg">
+                <div class="bg-orange-500/20 p-4 rounded-2xl mr-6">
+                    <i class="fas fa-thermometer-half text-4xl text-orange-500"></i>
+                </div>
+                <div>
+                    <p class="text-slate-400 uppercase text-xs tracking-widest">Temperatura Actual</p>
+                    <h3 id="temp-val" class="text-5xl font-black">--°C</h3>
+                </div>
+            </div>
+
+            <div class="bg-slate-800/50 p-6 rounded-3xl border border-white/10 flex items-center shadow-lg">
+                <div class="bg-blue-500/20 p-4 rounded-2xl mr-6">
+                    <i class="fas fa-droplet text-4xl text-blue-500"></i>
+                </div>
+                <div>
+                    <p class="text-slate-400 uppercase text-xs tracking-widest">Humedad Actual</p>
+                    <h3 id="hum-val" class="text-5xl font-black">--%</h3>
+                </div>
+            </div>
+        </div>
+
+        <div id="calculos-section" class="hidden mt-10">
+            <h3 class="text-2xl font-bold text-cyan-400 mb-6">Estadísticas</h3>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div class="bg-slate-800/50 p-6 rounded-3xl border border-white/10 flex items-center shadow-lg">
+                    <div class="bg-yellow-500/20 p-4 rounded-2xl mr-6">
+                        <i class="fas fa-thermometer-half text-4xl text-yellow-500"></i>
+                    </div>
+                    <div>
+                        <p class="text-slate-400 uppercase text-xs tracking-widest">Temp. Promedio</p>
+                        <h3 id="temp-promedio" class="text-4xl font-black">--°C</h3>
+                    </div>
+                </div>
+
+                <div class="bg-slate-800/50 p-6 rounded-3xl border border-white/10 flex items-center shadow-lg">
+                    <div class="bg-cyan-500/20 p-4 rounded-2xl mr-6">
+                        <i class="fas fa-droplet text-4xl text-cyan-500"></i>
+                    </div>
+                    <div>
+                        <p class="text-slate-400 uppercase text-xs tracking-widest">Hum. Promedio</p>
+                        <h3 id="hum-promedio" class="text-4xl font-black">--%</h3>
+                    </div>
+                </div>
+
+                <div class="bg-slate-800/50 p-6 rounded-3xl border border-white/10 flex items-center shadow-lg">
+                    <div class="bg-red-500/20 p-4 rounded-2xl mr-6">
+                        <i class="fas fa-fire text-4xl text-red-500"></i>
+                    </div>
+                    <div>
+                        <p class="text-slate-400 uppercase text-xs tracking-widest">Temp. Máxima</p>
+                        <h3 id="temp-maxima" class="text-4xl font-black">--°C</h3>
+                    </div>
+                </div>
+
+                <div class="bg-slate-800/50 p-6 rounded-3xl border border-white/10 flex items-center shadow-lg">
+                    <div class="bg-purple-500/20 p-4 rounded-2xl mr-6">
+                        <i class="fas fa-tint text-4xl text-purple-500"></i>
+                    </div>
+                    <div>
+                        <p class="text-slate-400 uppercase text-xs tracking-widest">Hum. Máxima</p>
+                        <h3 id="hum-maxima" class="text-4xl font-black">--%</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    // Login
+    document.getElementById('login-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const user = document.getElementById('user').value;
+        const pass = document.getElementById('pass').value;
+
+        if(user === "admin" && pass === "1234") {
+            document.getElementById('login-section').classList.add('hidden');
+            document.getElementById('dashboard-section').classList.remove('hidden');
+            iniciarMonitoreo(); // Empezar a pedir datos
+        } else {
+            alert("Datos incorrectos");
+        }
+    });
+
+    // Toggle para mostrar/ocultar cálculos
+    function toggleCalculos() {
+        const calculos = document.getElementById('calculos-section');
+        calculos.classList.toggle('hidden');
+    }
+
+    // Función que pide los datos al Backend (Python)
+    function iniciarMonitoreo() {
+        setInterval(async () => {
+            try {
+                // Obtener último dato
+                const response = await fetch('http://127.0.0.1:5000/datos');
+                const data = await response.json();
+
+                if (data.temperatura && data.humedad) {
+                    // Actualiza los números en la pantalla
+                    document.getElementById('temp-val').innerText = data.temperatura + "°C";
+                    document.getElementById('hum-val').innerText = data.humedad + "%";
+                }
+            } catch (error) {
+                console.log("Esperando datos nuevos...");
+            }
+
+            try {
+                // Obtener promedios
+                const responsePromedio = await fetch('http://127.0.0.1:5000/promedio');
+                const dataPromedio = await responsePromedio.json();
+
+                if (dataPromedio.temperatura_promedio && dataPromedio.humedad_promedio) {
+                    document.getElementById('temp-promedio').innerText = dataPromedio.temperatura_promedio + "°C";
+                    document.getElementById('hum-promedio').innerText = dataPromedio.humedad_promedio + "%";
+                }
+            } catch (error) {
+                console.log("Esperando promedios...");
+            }
+
+            try {
+                // Obtener máximos
+                const responseMaximos = await fetch('http://127.0.0.1:5000/maximos');
+                const dataMaximos = await responseMaximos.json();
+
+                if (dataMaximos.temperatura_maxima && dataMaximos.humedad_maxima) {
+                    document.getElementById('temp-maxima').innerText = dataMaximos.temperatura_maxima + "°C";
+                    document.getElementById('hum-maxima').innerText = dataMaximos.humedad_maxima + "%";
+                }
+            } catch (error) {
+                console.log("Esperando máximos...");
+            }
+        }, 3000); // Se actualiza cada 3 segundos
+    }
+</script>
+</body>
+</html>
