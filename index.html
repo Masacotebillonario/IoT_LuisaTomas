@@ -25,8 +25,11 @@
     </div>
 
     <div id="dashboard-section" class="hidden p-8">
-        <header class="flex justify-between items-center mb-10">
-            <h2 class="text-3xl font-bold text-cyan-400 italic">laboratorio big data <span class="text-sm font-light text-white block">Estado del tiempo real</span></h2>
+        <header class="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-4">
+            <div>
+                <h2 class="text-3xl font-bold text-cyan-400 italic">laboratorio big data</h2>
+                <p class="text-sm text-white/70">Selecciona un salón para ver sus registros</p>
+            </div>
             <div class="flex gap-4">
                 <button onclick="toggleCalculos()" class="bg-green-500/20 hover:bg-green-500 text-green-400 hover:text-white px-4 py-2 rounded-lg border border-green-500 transition">
                     <i class="fas fa-chart-bar mr-2"></i>Ver Cálculos
@@ -35,36 +38,56 @@
             </div>
         </header>
 
-        <div class="bg-slate-800/50 p-6 rounded-3xl border border-white/10 shadow-lg mb-8">
-            <h3 class="text-xl font-bold text-cyan-300 mb-4">Agregar nuevo dato</h3>
-            <form id="sensor-form" class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <input id="input-aula" type="text" placeholder="Aula" class="col-span-1 md:col-span-1 p-3 rounded-lg bg-slate-700 border border-slate-600 focus:outline-none focus:border-cyan-400" required>
-                <input id="input-temperatura" type="number" step="0.1" placeholder="Temperatura °C" class="col-span-1 md:col-span-1 p-3 rounded-lg bg-slate-700 border border-slate-600 focus:outline-none focus:border-cyan-400" required>
-                <input id="input-humedad" type="number" step="0.1" placeholder="Humedad %" class="col-span-1 md:col-span-1 p-3 rounded-lg bg-slate-700 border border-slate-600 focus:outline-none focus:border-cyan-400" required>
-                <button type="submit" class="col-span-1 md:col-span-1 bg-cyan-500 hover:bg-cyan-600 py-3 rounded-lg font-bold transition">Enviar</button>
-            </form>
-            <p id="sensor-status" class="mt-4 text-sm text-slate-400"></p>
+        <div id="salones-section" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
+            <div class="bg-slate-800/50 p-6 rounded-3xl border border-white/10 shadow-lg col-span-1 md:col-span-2 lg:col-span-3">
+                <p class="text-slate-400">Haz clic en un salón para ver las lecturas de temperatura y humedad.</p>
+            </div>
+            <div id="salones-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div class="bg-slate-800/50 p-6 rounded-3xl border border-white/10 flex items-center shadow-lg">
-                <div class="bg-orange-500/20 p-4 rounded-2xl mr-6">
-                    <i class="fas fa-thermometer-half text-4xl text-orange-500"></i>
-                </div>
+        <div id="salon-detail" class="hidden">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
                 <div>
-                    <p class="text-slate-400 uppercase text-xs tracking-widest">Temperatura Actual</p>
-                    <h3 id="temp-val" class="text-5xl font-black">--°C</h3>
+                    <h3 class="text-3xl font-bold text-cyan-300">Salón <span id="salon-title"></span></h3>
+                    <p class="text-slate-400 mt-2">Registros recientes de temperatura y humedad</p>
+                </div>
+                <button onclick="showSalones()" class="bg-slate-700 hover:bg-slate-600 text-white px-5 py-3 rounded-lg border border-white/10 transition">Volver a salones</button>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+                <div class="bg-slate-800/50 p-6 rounded-3xl border border-white/10 flex items-center shadow-lg">
+                    <div class="bg-orange-500/20 p-4 rounded-2xl mr-6">
+                        <i class="fas fa-thermometer-half text-4xl text-orange-500"></i>
+                    </div>
+                    <div>
+                        <p class="text-slate-400 uppercase text-xs tracking-widest">Temperatura Última</p>
+                        <h3 id="temp-val" class="text-5xl font-black">--°C</h3>
+                    </div>
+                </div>
+
+                <div class="bg-slate-800/50 p-6 rounded-3xl border border-white/10 flex items-center shadow-lg">
+                    <div class="bg-blue-500/20 p-4 rounded-2xl mr-6">
+                        <i class="fas fa-droplet text-4xl text-blue-500"></i>
+                    </div>
+                    <div>
+                        <p class="text-slate-400 uppercase text-xs tracking-widest">Humedad Última</p>
+                        <h3 id="hum-val" class="text-5xl font-black">--%</h3>
+                    </div>
                 </div>
             </div>
 
-            <div class="bg-slate-800/50 p-6 rounded-3xl border border-white/10 flex items-center shadow-lg">
-                <div class="bg-blue-500/20 p-4 rounded-2xl mr-6">
-                    <i class="fas fa-droplet text-4xl text-blue-500"></i>
-                </div>
-                <div>
-                    <p class="text-slate-400 uppercase text-xs tracking-widest">Humedad Actual</p>
-                    <h3 id="hum-val" class="text-5xl font-black">--%</h3>
-                </div>
+            <div class="overflow-x-auto bg-slate-800/50 p-6 rounded-3xl border border-white/10 shadow-lg mb-10">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="text-slate-400 uppercase text-xs tracking-widest border-b border-white/10">
+                            <th class="py-3 px-4">Fecha</th>
+                            <th class="py-3 px-4">Temperatura</th>
+                            <th class="py-3 px-4">Humedad</th>
+                        </tr>
+                    </thead>
+                    <tbody id="salon-rows"></tbody>
+                </table>
+                <p id="salon-empty" class="mt-4 text-slate-400 hidden">No hay registros en este salón.</p>
             </div>
         </div>
 
@@ -124,99 +147,129 @@
         if(user === "admin" && pass === "1234") {
             document.getElementById('login-section').classList.add('hidden');
             document.getElementById('dashboard-section').classList.remove('hidden');
-            iniciarMonitoreo(); // Empezar a pedir datos
+            loadSalones();
         } else {
             alert("Datos incorrectos");
         }
     });
 
-    document.getElementById('sensor-form').addEventListener('submit', async function(e) {
-        e.preventDefault();
+    function loadSalones() {
+        const grid = document.getElementById('salones-grid');
+        grid.innerHTML = '<p class="text-slate-400 col-span-1 md:col-span-2 lg:col-span-3">Cargando salones...</p>';
+        fetch('/salones')
+            .then(response => response.json())
+            .then(salones => {
+                if (!Array.isArray(salones) || salones.length === 0) {
+                    grid.innerHTML = '<p class="text-slate-400 col-span-1 md:col-span-2 lg:col-span-3">No hay salones disponibles.</p>';
+                    return;
+                }
 
-        const aula = document.getElementById('input-aula').value.trim();
-        const temperatura = parseFloat(document.getElementById('input-temperatura').value);
-        const humedad = parseFloat(document.getElementById('input-humedad').value);
-        const status = document.getElementById('sensor-status');
-
-        if (!aula || isNaN(temperatura) || isNaN(humedad)) {
-            status.innerText = 'Por favor completa todos los datos correctamente.';
-            return;
-        }
-
-        status.innerText = 'Enviando dato...';
-
-        try {
-            const response = await fetch('/sensor', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ aula, temperatura, humedad })
+                grid.innerHTML = '';
+                salones.forEach(salon => {
+                    const button = document.createElement('button');
+                    button.className = 'bg-slate-800/80 hover:bg-slate-700 text-white text-left p-6 rounded-3xl border border-white/10 shadow-lg transition';
+                    button.innerHTML = `<span class="block text-xl font-bold">${salon}</span><span class="text-slate-400 mt-2 block">Ver registros</span>`;
+                    button.onclick = () => showSalonDetail(salon);
+                    grid.appendChild(button);
+                });
+            })
+            .catch(() => {
+                grid.innerHTML = '<p class="text-slate-400 col-span-1 md:col-span-2 lg:col-span-3">Error cargando salones.</p>';
             });
+    }
 
-            const data = await response.json();
+    function showSalonDetail(salon) {
+        document.getElementById('salones-section').classList.add('hidden');
+        document.getElementById('salon-detail').classList.remove('hidden');
+        document.getElementById('salon-title').innerText = salon;
+        document.getElementById('temp-val').innerText = '--°C';
+        document.getElementById('hum-val').innerText = '--%';
+        document.getElementById('salon-rows').innerHTML = '';
+        document.getElementById('salon-empty').classList.add('hidden');
+        loadSalon(salon);
+    }
 
-            if (response.ok) {
-                status.innerText = 'Dato enviado correctamente.';
-                document.getElementById('input-aula').value = '';
-                document.getElementById('input-temperatura').value = '';
-                document.getElementById('input-humedad').value = '';
-            } else {
-                status.innerText = 'Error al enviar: ' + (data.error || 'revisa el servidor');
-            }
-        } catch (error) {
-            status.innerText = 'No se pudo conectar al servidor.';
-        }
-    });
+    function showSalones() {
+        document.getElementById('salon-detail').classList.add('hidden');
+        document.getElementById('salones-section').classList.remove('hidden');
+    }
 
-    // Toggle para mostrar/ocultar cálculos
+    function loadSalon(salon) {
+        fetch(`/salon/${encodeURIComponent(salon)}`)
+            .then(response => response.json())
+            .then(records => {
+                const rows = document.getElementById('salon-rows');
+                rows.innerHTML = '';
+
+                if (!Array.isArray(records) || records.length === 0) {
+                    document.getElementById('salon-empty').classList.remove('hidden');
+                    return;
+                }
+
+                const latest = records[0];
+                if (latest.temperatura !== undefined) {
+                    document.getElementById('temp-val').innerText = latest.temperatura + '°C';
+                }
+                if (latest.humedad !== undefined) {
+                    document.getElementById('hum-val').innerText = latest.humedad + '%';
+                }
+
+                records.forEach(record => {
+                    const row = document.createElement('tr');
+                    row.className = 'border-b border-white/10';
+                    const fecha = record.fecha_registro ? new Date(record.fecha_registro).toLocaleString() : 'Sin fecha';
+                    row.innerHTML = `
+                        <td class="py-3 px-4 text-slate-300">${fecha}</td>
+                        <td class="py-3 px-4 text-slate-300">${record.temperatura ?? '--'}°C</td>
+                        <td class="py-3 px-4 text-slate-300">${record.humedad ?? '--'}%</td>
+                    `;
+                    rows.appendChild(row);
+                });
+            })
+            .catch(() => {
+                document.getElementById('salon-rows').innerHTML = '<tr><td colspan="3" class="py-4 px-4 text-slate-400">Error cargando registros del salón.</td></tr>';
+            });
+    }
+
     function toggleCalculos() {
         const calculos = document.getElementById('calculos-section');
         calculos.classList.toggle('hidden');
+        if (!calculos.classList.contains('hidden')) {
+            loadCalculos();
+        }
     }
 
-    // Función que pide los datos al Backend (Python)
-    function iniciarMonitoreo() {
-        setInterval(async () => {
-            try {
-                // Obtener último dato
-                const response = await fetch('/datos');
-                const data = await response.json();
-
-                if (data.temperatura && data.humedad) {
-                    // Actualiza los números en la pantalla
-                    document.getElementById('temp-val').innerText = data.temperatura + "°C";
-                    document.getElementById('hum-val').innerText = data.humedad + "%";
+    function loadCalculos() {
+        fetch('/promedio')
+            .then(response => response.json())
+            .then(dataPromedio => {
+                if (dataPromedio.temperatura_promedio !== undefined) {
+                    document.getElementById('temp-promedio').innerText = dataPromedio.temperatura_promedio + '°C';
                 }
-            } catch (error) {
-                console.log("Esperando datos nuevos...");
-            }
-
-            try {
-                // Obtener promedios
-                const responsePromedio = await fetch('/promedio');
-                const dataPromedio = await responsePromedio.json();
-
-                if (dataPromedio.temperatura_promedio && dataPromedio.humedad_promedio) {
-                    document.getElementById('temp-promedio').innerText = dataPromedio.temperatura_promedio + "°C";
-                    document.getElementById('hum-promedio').innerText = dataPromedio.humedad_promedio + "%";
+                if (dataPromedio.humedad_promedio !== undefined) {
+                    document.getElementById('hum-promedio').innerText = dataPromedio.humedad_promedio + '%';
                 }
-            } catch (error) {
-                console.log("Esperando promedios...");
-            }
+            })
+            .catch(() => {
+                document.getElementById('temp-promedio').innerText = '--°C';
+                document.getElementById('hum-promedio').innerText = '--%';
+            });
 
-            try {
-                // Obtener máximos
-                const responseMaximos = await fetch('/maximos');
-                const dataMaximos = await responseMaximos.json();
-
-                if (dataMaximos.temperatura_maxima && dataMaximos.humedad_maxima) {
-                    document.getElementById('temp-maxima').innerText = dataMaximos.temperatura_maxima + "°C";
-                    document.getElementById('hum-maxima').innerText = dataMaximos.humedad_maxima + "%";
+        fetch('/maximos')
+            .then(response => response.json())
+            .then(dataMaximos => {
+                if (dataMaximos.temperatura_maxima !== undefined) {
+                    document.getElementById('temp-maxima').innerText = dataMaximos.temperatura_maxima + '°C';
                 }
-            } catch (error) {
-                console.log("Esperando máximos...");
-            }
-        }, 3000); // Se actualiza cada 3 segundos
+                if (dataMaximos.humedad_maxima !== undefined) {
+                    document.getElementById('hum-maxima').innerText = dataMaximos.humedad_maxima + '%';
+                }
+            })
+            .catch(() => {
+                document.getElementById('temp-maxima').innerText = '--°C';
+                document.getElementById('hum-maxima').innerText = '--%';
+            });
     }
-</script>
+    </script>
 </body>
 </html>
