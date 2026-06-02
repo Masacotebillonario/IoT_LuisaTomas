@@ -1,4 +1,9 @@
 <!DOCTYPE html>
+<!--
+    Archivo frontend: index.html
+    Comentarios en primera persona añadidos para explicar cada bloque
+    (HTML, estilos y JavaScript). Simula que el autor explica su propio código.
+-->
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -140,6 +145,9 @@
     </div>
 
     <script>
+    // Script principal: manejo de login, carga de salones,
+    // selección de salón y carga de estadísticas.
+    // Comentarios añadidos para que el autor explique cada función.
     // Login
     document.getElementById('login-form').addEventListener('submit', function(e) {
         e.preventDefault();
@@ -165,6 +173,9 @@
         return salonLabels[salon] || salon;
     }
 
+    // Carga la lista de salones desde el endpoint `/salones`.
+    // Renderiza un botón por salón en el grid y establece el
+    // comportamiento para abrir el detalle del salón.
     function loadSalones() {
         const grid = document.getElementById('salones-grid');
         grid.innerHTML = '<p class="text-slate-400 col-span-1 md:col-span-2 lg:col-span-3">Cargando salones...</p>';
@@ -190,6 +201,9 @@
             });
     }
 
+    // Muestra la vista de detalle de un salón seleccionado.
+    // Guarda `selectedSalon` para que otras funciones (estadísticas)
+    // sepan sobre qué salón deben operar.
     function showSalonDetail(salon) {
         selectedSalon = salon;
         document.getElementById('salones-section').classList.add('hidden');
@@ -203,6 +217,7 @@
         loadSalon(salon);
     }
 
+    // Vuelve a la lista de salones y limpia el salón seleccionado.
     function showSalones() {
         selectedSalon = null;
         document.getElementById('salon-detail').classList.add('hidden');
@@ -210,6 +225,8 @@
         document.getElementById('salones-section').classList.remove('hidden');
     }
 
+    // Carga los registros (últimos) del salón y los muestra en la tabla.
+    // También actualiza los indicadores de última temperatura/humedad.
     function loadSalon(salon) {
         fetch(`/salon/${encodeURIComponent(salon)}`)
             .then(response => response.json())
@@ -247,6 +264,9 @@
             });
     }
 
+    // Muestra/oculta la sección de estadísticas. Cuando se abre, solicita
+    // los cálculos correspondientes (promedio y máximos) ya sea globales
+    // o por salón, según `selectedSalon`.
     function toggleCalculos() {
         const calculos = document.getElementById('calculos-section');
         calculos.classList.toggle('hidden');
@@ -255,6 +275,9 @@
         }
     }
 
+    // Solicita las estadísticas (promedio y máximos). Si `selectedSalon`
+    // está definido, pide los datos específicos para ese salón; de lo
+    // contrario, solicita las estadísticas globales.
     function loadCalculos() {
         const basePath = selectedSalon ? `/salon/${encodeURIComponent(selectedSalon)}` : '';
         const promedioUrl = selectedSalon ? `${basePath}/promedio` : '/promedio';

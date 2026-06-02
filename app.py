@@ -1,3 +1,17 @@
+"""
+Servidor Flask para el proyecto Monitoreo_IoT.
+Comentarios añadidos en estilo personal (simulando que los escribe el autor).
+
+Este módulo expone rutas para:
+- recibir datos de sensores (POST /sensor)
+- devolver el último dato (/datos)
+- listar salones (/salones)
+- obtener registros por salón (/salon/<aula>)
+- calcular estadísticas globales y por salón (/promedio, /maximos, /salon/<aula>/...)
+
+Notas:
+- Las funciones y bloques están comentados para facilitar el mantenimiento.
+"""
 from flask import Flask, request, jsonify, send_file
 from flask_cors import CORS
 from pymongo import MongoClient
@@ -28,6 +42,10 @@ except Exception as e:
 
 # ==========================
 # SERVIR FRONTEND
+# Ruta que entrega la página principal (index.html) al navegador.
+# Uso: el navegador accede a `/` y recibe el HTML estático servido
+# por Flask. Esto hace simple el despliegue sin un servidor estático
+# separado en entornos pequeños o de prueba.
 # ==========================
 
 @app.route('/')
@@ -36,6 +54,10 @@ def index():
 
 # ==========================
 # RECIBIR DATOS DEL SENSOR
+# Punto de entrada para los dispositivos (ESP32, scripts, etc.).
+# Espera JSON con, al menos, los campos `aula`, `temperatura` y
+# `humedad`. Se añade la marca de tiempo del servidor y se inserta
+# el documento en la colección `MonitoreoAulas`.
 # ==========================
 
 @app.route('/sensor', methods=['POST'])
@@ -70,6 +92,8 @@ def recibir():
 
 # ==========================
 # ENVIAR ÚLTIMO DATO AL FRONTEND
+# Devuelve el último documento insertado, ordenado por
+# `fecha_registro` descendente. Útil para indicadores rápidos.
 # ==========================
 
 @app.route('/datos', methods=['GET'])
@@ -91,6 +115,9 @@ def enviar_datos():
 
 # ==========================
 # SALONES DISPONIBLES
+# Devuelve la lista de nombres de `aula` existentes usando
+# `distinct` sobre la colección. Se filtran valores nulos y
+# se ordena para presentar una lista estable al frontend.
 
 @app.route('/salones', methods=['GET'])
 def obtener_salones():
@@ -107,6 +134,9 @@ def obtener_salones():
 
 # ==========================
 # REGISTROS POR SALÓN
+# Devuelve los últimos 50 registros de un salón concreto, ordenados
+# por `fecha_registro` descendente. Se serializan los ObjectId y
+# las fechas para que el frontend pueda mostrarlas correctamente.
 
 @app.route('/salon/<aula>', methods=['GET'])
 def obtener_salon(aula):
@@ -130,6 +160,9 @@ def obtener_salon(aula):
 
 # ==========================
 # PROMEDIOS DE TEMPERATURA Y HUMEDAD
+# Endpoints que calculan estadísticas agregadas. Hay variantes
+# globales y por salón (añadidas más abajo). Uso de agregaciones
+# de MongoDB para evitar traer todos los documentos al backend.
 # ==========================
 
 @app.route('/promedio', methods=['GET'])
